@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Animation : MonoBehaviour
 {
-     Vector3 direction = new Vector3(5f,0f,35f);
-    float speed = 3.0f;
+     Vector3 direction = new Vector3(5f,0f,45f);
+    float speed = 4.0f;
 
     // Use this for initialization
     void Start () {
@@ -17,7 +17,7 @@ public class Animation : MonoBehaviour
 
         float step = speed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, direction, step);
-          if (transform.position.z > 30f)
+          if (transform.position.z > 40f)
         {
             transform.position = new Vector3(5f, 0f, 0f);
         }
