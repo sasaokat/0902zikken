@@ -5,7 +5,7 @@ using UnityEngine;
 public class Animation : MonoBehaviour
 {
      Vector3 direction = new Vector3(5f,0f,45f);
-    float speed = 4.0f;
+    float speed = 6.0f;
 
     // Use this for initialization
     void Start () {
