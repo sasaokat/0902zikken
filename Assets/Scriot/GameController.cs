@@ -7,7 +7,7 @@ public class GameController : MonoBehaviour {
     // Start is called before the first frame update
     void Start()
     {
-        Invoke("Quit", 60.0f);
+        Invoke("Quit", 20.0f);
     }
 
     void Quit() {
