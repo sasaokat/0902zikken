@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CreateRandomPosition : MonoBehaviour
 {
+    //値の設定
     [SerializeField]
     [Tooltip("生成するGameObject")]
     private GameObject createPrefab;
@@ -13,15 +14,12 @@ public class CreateRandomPosition : MonoBehaviour
     [SerializeField]
     [Tooltip("生成する範囲B")]
     private Transform rangeB;
-/*     [SerializeField] 
-    [Tooltip("生成するGameObject数")] */
-    int itemCount = 10000;
+    [SerializeField] 
+    [Tooltip("生成するGameObject数")]
+    int itemCount = 8000;
 
     // アイテムのインスタンス
     List<GameObject> items = new List<GameObject>();
-
-    
-
 
     void Start()
     {

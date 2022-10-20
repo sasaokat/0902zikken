@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour {
 
-    // Start is called before the first frame update
+    [SerializeField] 
+    [Tooltip("自動終了の秒数")]
+    float seconds = 10.0f;
+
     void Start()
     {
-        Invoke("Quit", 20.0f);
+        Invoke("Quit", seconds);
     }
 
     void Quit() {
