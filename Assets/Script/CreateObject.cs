@@ -23,22 +23,31 @@ public class CreateObject : MonoBehaviour
 
     // アイテムのインスタンス
     List<GameObject> items = new List<GameObject>();
+
+    //カメラの設定
+    Camera cam;
+    Vector3 direction = new Vector3(5f,0f,45f);
+    float speed = 6.0f;
     
+    // CubeプレハブをGameObject型で取得
+    GameObject obj = (GameObject)Resources.Load ("Cube");
+
     void Start()
     {
-        // CubeプレハブをGameObject型で取得
-        GameObject obj = (GameObject)Resources.Load ("Cube");
         // Cubeプレハブを元に、インスタンスを生成、
         Instantiate (obj, new Vector3(5.0f,0.0f,30.0f), Quaternion.identity);
 
+        cam = Camera.main;
 
         StartCoroutine("CubeInstant");        
     }
 
     private IEnumerator CubeInstant()
     {
-        
+        obj.SetActive (false);
         yield return new WaitForSeconds(5.0f);
+        
+
         StartCoroutine("SphereRandom");
     }
 
@@ -72,6 +81,18 @@ public class CreateObject : MonoBehaviour
                 } 
             }
         }
+        StartCoroutine("MoveCamera");
 
+    }
+
+    private IEnumerator MoveCamera()
+    {
+        float step = speed * Time.deltaTime;
+        cam.transform.position = Vector3.MoveTowards(cam.transform.position, direction, step);
+          if (cam.transform.position.z > 40f)
+        {
+            cam.transform.position = new Vector3(5f, 0f, 0f);
+        }
+        yield return step;
     }
 }
