@@ -12,7 +12,7 @@ namespace ViveSR
         namespace Eye
         {
 
-            public class eyetrack : MonoBehaviour
+            public class GazeCornea : MonoBehaviour
             {
 
                 //excelファイル作成
@@ -26,9 +26,17 @@ namespace ViveSR
                 //結果の格納用floot型関数
                 private float pullleft;
 
-                //if文の関数
-                public float timeOut = 1.0f;
-                private float timeElapsed;
+                //⓪取得呼び出し-----------------------------
+                //呼び出したデータ格納用の関数
+                EyeData eye;
+                //-------------------------------------------
+
+
+                //②視線の起点の座標(角膜の中心）mm単位------
+                //呼び出したデータ格納用の関数
+                Vector3 LeftGazeOrigin;
+                Vector3 RightGazeOrigin;
+                //-------------------------------------------
 
                 void Start()
                 {
@@ -41,28 +49,25 @@ namespace ViveSR
                 // 視線計測
                 void Update()
                 {
-
-                    SRanipal_Eye.GetGazeRay(GazeIndex.COMBINE, out GazeOriginCombinedLocalC, out GazeDirectionCombinedLocalC);
-
-                    Vector3 GazeDirectionCombinedC = Camera.main.transform.TransformDirection(GazeDirectionCombinedLocalC);
-                    RaycastHit hitC = new RaycastHit();
-
                 //結果をGetLastAxisで取得してpullleftに格納
                 //SteamVR_Input_Sources.機器名（ここは左コントローラ）
                     pullleft = triggerpull.GetLastAxis(SteamVR_Input_Sources.LeftHand);
-                    timeElapsed += Time.deltaTime;
+                    
 
                 // 書き出し
- /*                    if (Physics.Raycast(Camera.main.transform.position, Camera.main.transform.position + GazeDirectionCombinedC * 50, out hitC)) */
-                        if(timeElapsed >= timeOut)
+
+                    //②視線の起点の座標(角膜の中心）mm単位------ -
+                    //左目の眼球データ（視線原点）が妥当ならば取得　目をつぶるとFalse　判定精度はまあまあ
+                    if (eye.verbose_data.left.GetValidity(SingleEyeDataValidity.SINGLE_EYE_DATA_GAZE_ORIGIN_VALIDITY))
                     {
-                        string[] str = { "" + hitC.point.x, "" + hitC.point.y, "" + hitC.point.z,"" + pullleft,""+ UnityEngine.Time.time};
+                        LeftGazeOrigin = eye.verbose_data.left.gaze_origin_mm;
+                        string[] str = { "" + LeftGazeOrigin.x, "" + LeftGazeOrigin.y, "" + LeftGazeOrigin.z,"" + pullleft,""+ UnityEngine.Time.time};
                         string str2 = string.Join(",", str);
                         sw.WriteLine(str2);
                         sw.Flush();
-                        timeElapsed = 0.0f;
                         Debug.Log(11111);
                     }
+
                 // スペースで終了
                    if (Keyboard.current.spaceKey.wasPressedThisFrame)
                     {

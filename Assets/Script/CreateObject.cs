@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class CreateObject : MonoBehaviour
 {
-    //数値の設定
+    //数値を表示
     [SerializeField]
     [Tooltip("生成するGameObject")]
     private GameObject createPrefab;
@@ -20,40 +20,49 @@ public class CreateObject : MonoBehaviour
     [SerializeField] 
     [Tooltip("生成するGameObject数")]
     int itemCount = 8000;
+    [SerializeField] 
+    [Tooltip("cameraの速度")]
+    float speed = 5.0f;
+    [SerializeField] 
+    [Tooltip("ループ距離")]
+    float loop = 40.0f;
+    [SerializeField] 
+    [Tooltip("制限時間")]
+    int limit = 10;
+    
+
 
     // アイテムのインスタンス
     List<GameObject> items = new List<GameObject>();
 
     //カメラの設定
     Camera cam;
-    Vector3 direction = new Vector3(5f,0f,45f);
-    float speed = 6.0f;
-    
-    // CubeプレハブをGameObject型で取得
-    GameObject obj = (GameObject)Resources.Load ("Cube");
+    Vector3 direction = new Vector3(0f,0f,45f);
 
+    float elapsedTime;
+        
     void Start()
     {
-        // Cubeプレハブを元に、インスタンスを生成、
-        Instantiate (obj, new Vector3(5.0f,0.0f,30.0f), Quaternion.identity);
-
-        cam = Camera.main;
-
-        StartCoroutine("CubeInstant");        
+        //注視点明示化
+        gazePoint.SetActive(true);
+        StartCoroutine("SphereRandom");    
     }
 
-    private IEnumerator CubeInstant()
+    void Update ()
     {
-        obj.SetActive (false);
-        yield return new WaitForSeconds(5.0f);
-        
+        //1秒に1足していく
+		elapsedTime += Time.deltaTime; 
+/*         Debug.Log(elapsedTime); */
 
-        StartCoroutine("SphereRandom");
-    }
+
+
+	}
 
     private IEnumerator SphereRandom()
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(2.0f);
+        //注視点非明示化
+        gazePoint.SetActive (false);
                 
         // ランダムに球を作る
         for (int i = 0; i < itemCount ; i++)
@@ -81,18 +90,44 @@ public class CreateObject : MonoBehaviour
                 } 
             }
         }
+        yield return null;
         StartCoroutine("MoveCamera");
-
     }
 
     private IEnumerator MoveCamera()
     {
-        float step = speed * Time.deltaTime;
-        cam.transform.position = Vector3.MoveTowards(cam.transform.position, direction, step);
-          if (cam.transform.position.z > 40f)
-        {
-            cam.transform.position = new Vector3(5f, 0f, 0f);
-        }
-        yield return step;
+        cam = Camera.main;
+
+        //カメラの移動
+        while (true)
+        { 
+            float step = speed * Time.deltaTime;
+            cam.transform.position = Vector3.MoveTowards(cam.transform.position, direction, step);
+
+            yield return null; 
+            //ループの設定
+            if(cam.transform.position.z > loop)
+            {
+                cam.transform.position = new Vector3(0f, 0f, 0f);
+            }
+            //制限時間
+            if(elapsedTime > limit)
+            {
+            break;
+            }
+        }   
+        StartCoroutine("QuitGame");
     }
+    
+    private IEnumerator QuitGame()
+    {    
+        //終了処理
+        #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+        #elif UNITY_STANDALONE
+            UnityEngine.Application.Quit();
+        #endif
+        yield return null; 
+    }
+
 }
